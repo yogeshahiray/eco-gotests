@@ -38,7 +38,9 @@ cd tests/system-tests/ran-du
 ginkgo -v --label-filter="randu && launch-workload" ./tests
 ```
 
-Labels match constants in `internal/randuparams/const.go` (e.g., `launch-workload`, `SoftReboot`, `HardReboot`, `KernelCrashKdump`, `NMIKernelCrashKdump`, `ptp-3wpc`, `ZTPPoliciesCompliance`, `cert-manager`, `StabilityWorkload`, `StabilityNoWorkload`).
+Labels match constants in `internal/randuparams/const.go` (e.g., `Prerequisites`, `launch-workload`, `SoftReboot`, `HardReboot`, `KernelCrashKdump`, `NMIKernelCrashKdump`, `ptp-3wpc`, `PTPGNRDBCNoHoldoverValidation`, `ZTPPoliciesCompliance`, `cert-manager`, `StabilityWorkload`, `StabilityNoWorkload`).
+
+`Prerequisites` ([tests/prerequisites.go](tests/prerequisites.go)) is a read-only preflight over everything in [prerequisites.md](prerequisites.md). It has no `reportxml.ID` — like `ZTPPoliciesCompliance` and `SriovFecNodeConfigStatus` it produces no Polarion entry. Keep it in sync when a suite gains a prerequisite.
 
 ## Architecture
 

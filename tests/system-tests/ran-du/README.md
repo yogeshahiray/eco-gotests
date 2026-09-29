@@ -18,10 +18,13 @@ System-level test automation for RAN Distributed Unit (DU) workloads on OpenShif
 * cert-manager operator deployed (for certificate management tests)
 * BMC/Redfish access configured (for NMI kernel crash tests)
 
+See [prerequisites.md](prerequisites.md) for the per-suite breakdown of required cluster resources (storage, networking, operators, hardware and node access), and run the `Prerequisites` suite below to check them against a cluster.
+
 ### Test suites
 
 | File | Label | ID(s) | Description |
 |------|-------|-------|-------------|
+| [prerequisites.go](tests/prerequisites.go) | `Prerequisites` | — | Read-only preflight: verifies the cluster, node and test runner prerequisites of every suite in [prerequisites.md](prerequisites.md) |
 | [launch-workload.go](tests/launch-workload.go) | `launch-workload` | 55465 | Deploy workload, verify all pods are ready, validate PTP |
 | [launch-workload-multiple-iter-loadavg.go](tests/launch-workload-multiple-iter-loadavg.go) | `LaunchWorkloadMultipleIterations` | 45698 | Repeat workload deploy/delete cycles, monitor node load average < 100 |
 | [soft-reboot.go](tests/soft-reboot.go) | `SoftReboot` | 42738 | Soft reboot all nodes, validate workload, SR-IOV, and PTP recovery |
@@ -29,6 +32,7 @@ System-level test automation for RAN Distributed Unit (DU) workloads on OpenShif
 | [kernel-crash-kdump.go](tests/kernel-crash-kdump.go) | `KernelCrashKdump` | 56216 | Trigger kernel crash via sysrq, verify vmcore dump in `/var/crash` |
 | [nmi-kernel-crash-kdump.go](tests/nmi-kernel-crash-kdump.go) | `NMIKernelCrashKdump` | 85975 | Trigger NMI via Redfish (BMC), verify node recovery and vmcore generation |
 | [ptp-3wpc.go](tests/ptp-3wpc.go) | `ptp-3wpc` | 99991-99997 | 7 PTP cases: GNSS lock, inter-card sync, DPLL stability, clock class, GNSS recovery, iperf3 stress, packet loss |
+| [gnrd-bc-no-holdover.go](tests/gnrd-bc-no-holdover.go) | `PTPGNRDBCNoHoldoverValidation` | 99981-99988 | 8 GNR-D T-BC (no GNSS) cases: upstream lock, clock class traceability, DPLL lock on the leading interface, composite T-BC state, in-spec offsets, no-holdover config, downstream port programming, free-run on upstream loss (disruptive, opt-in) |
 | [du-ztp-policies-compliance.go](tests/du-ztp-policies-compliance.go) | `ZTPPoliciesCompliance` | — | Verify all cluster policies are Compliant |
 | [cert-manager.go](tests/cert-manager.go) | `cert-manager` | 89041-89048 | cert-manager operator verification, DNS-01 ACME certificate generation, alert escalation/resolution, API server and ingress certificate renewal |
 | [stability-workload.go](tests/stability-workload.go) | `StabilityWorkload` | 42744 | Long-running stability with workload: PTP status, policy compliance, and pod restarts at configurable intervals |
@@ -119,6 +123,7 @@ The suite depends on shared helpers from `tests/system-tests/internal/`:
 | `ECO_RANDU_PTP_NETEM_INTERFACE` | _(empty)_ | netem interface for packet loss test (enables PTP Case 07) |
 | `ECO_RANDU_PTP_WPC_SYNC_INTERFACES` | _(empty)_ | Comma-separated PHC sync interfaces for Case 01/02 |
 | `ECO_RANDU_PTP_WPC_PRIMARY_IFACE` | _(empty)_ | Primary PHC interface |
+| `ECO_RANDU_PTP_TBC_DISRUPTIVE` | `false` | Enable GNR-D T-BC Case 07, which takes the upstream PTP port down |
 
 ### BMC / NMI
 
@@ -140,6 +145,20 @@ The suite depends on shared helpers from `tests/system-tests/internal/`:
 Tests requiring configuration that is not set will be skipped.
 
 ## Running RAN DU Test Suites
+
+### Checking the prerequisites before a run
+
+```bash
+export KUBECONFIG=/path/to/kubeconfig
+export ECO_TEST_FEATURES="ran-du"
+export ECO_TEST_LABELS="randu && Prerequisites"
+make run-tests
+```
+
+The suite only reads cluster state, so it is safe to run at any time. Export the same `ECO_RANDU_*`
+variables the real run will use: the checks follow the configuration, and a prerequisite that only
+makes a suite skip (PTP disabled, no BMC credentials, no cert-manager issuer, a boundary clock with
+a holdover window) is reported as a skip rather than a failure.
 
 ### Running all tests
 

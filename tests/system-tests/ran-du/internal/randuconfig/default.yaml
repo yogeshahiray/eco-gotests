@@ -32,6 +32,10 @@ ptp_wpc_sync_interfaces: ""
 # Optional; when empty defaults to last name in ptp_wpc_sync_interfaces (or inferred list).
 ptp_wpc_primary_interface: ""
 
+# T-BC no holdover Case 07 takes the upstream PTP port down to prove the clock never enters holdover.
+# Leave false to skip it; the node loses PTP sync for the duration of the case.
+ptp_tbc_disruptive: false
+
 # BMC credentials map for tests requiring BMC access (e.g., NMIKernelCrashKdump).
 # Format for env var ECO_RANDU_NODES_CREDENTIALS_MAP: "node1,user,pass,https://bmc:443;node2,user,pass,https://bmc2:443"
 # Tests requiring BMC will be skipped if this is empty.

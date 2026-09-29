@@ -11,6 +11,10 @@ const (
 	LabelLaunchWorkloadTestCases = "launch-workload"
 	// LabelCertManager represents cert-manager test cases label.
 	LabelCertManager = "cert-manager"
+	// LabelPTPGNRDBCNoHoldover represents the GNR-D boundary clock no holdover test cases label.
+	LabelPTPGNRDBCNoHoldover = "PTPGNRDBCNoHoldoverValidation"
+	// LabelPrerequisites represents the environment prerequisites validation test cases label.
+	LabelPrerequisites = "Prerequisites"
 	// DefaultTimeout is the timeout used for test resources creation.
 	DefaultTimeout = 900 * time.Second
 	// TestWorkloadShellLaunchMethod is used when using a shell script for launching the test workload.

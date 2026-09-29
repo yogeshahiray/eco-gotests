@@ -98,6 +98,7 @@ type RanDuConfig struct {
 	PtpNetemInterface          string      `yaml:"ptp_netem_interface" envconfig:"ECO_RANDU_PTP_NETEM_INTERFACE"`
 	PtpWpcSyncInterfaces       string      `yaml:"ptp_wpc_sync_interfaces" envconfig:"ECO_RANDU_PTP_WPC_SYNC_INTERFACES"`
 	PtpWpcPrimaryInterface     string      `yaml:"ptp_wpc_primary_interface" envconfig:"ECO_RANDU_PTP_WPC_PRIMARY_IFACE"`
+	PtpTBCDisruptive           bool        `yaml:"ptp_tbc_disruptive" envconfig:"ECO_RANDU_PTP_TBC_DISRUPTIVE"`
 	RebootRecoveryTime         int         `yaml:"reboot_recovery_time" envconfig:"ECO_RANDU_RECOVERY_TIME"`
 	NodesCredentialsMap        NodesBMCMap `yaml:"randu_nodes_bmc_map" envconfig:"ECO_RANDU_NODES_CREDENTIALS_MAP"`
 	CertManager                struct {
